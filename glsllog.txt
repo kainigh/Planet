@@ -1,0 +1,4 @@
+
+ERROR: 0:113: 'assign' :  cannot convert from 'uniform 4X4 matrix of mediump float' to 'Position 4-component vector of highp float'
+
+
