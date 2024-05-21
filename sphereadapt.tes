@@ -21,6 +21,8 @@ uniform float uHeightScale;
 in vec2 TexCoord_ES_in[];
 in vec3 Normal_ES_in[];
 
+in vec2 TextureCoord[];
+
 out vec2 TexCoord_FS_in;
 out vec3 Normal_FS_in;
 
@@ -38,6 +40,12 @@ vec3 DELTAX = vec3( uDelta, 0., 0. );
 vec3 DELTAY = vec3( 0., uDelta, 0. );
 
 
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
+{
+    return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+}
+
+
 float Height( vec3 mc )
 {
 	vec3 newmc = vec3( mc.x+uBiasx, mc.y+uBiasy, mc.z );
@@ -49,15 +57,33 @@ float Height( vec3 mc )
 	return n;
 }
 
-
-in vec2 TextureCoord[];
-
 //out float Height;
+
+in TCS_OUT
+{
+	vec2 vST;
+    vec2 tc;
+} tes_in[];
+
+out TES_OUT
+{
+	vec2 vST;
+    vec2 tc;
+
+} tes_out;
+
+
 
 void main( )
 {
-	
-	
+	vec3 new = gl_TessCoord.xyz;
+
+	TexCoord_FS_in = interpolate2D(TexCoord_ES_in[0], TexCoord_ES_in[1], TexCoord_ES_in[2]);
+
+	float Displacement = texture(uDispUnit, tes_in[0].vST).x;
+
+	Displacement *= uHeightScale;
+
 	float h00 = Height( gl_TessCoord.xyz );
 	/*float hp0 = Height( gl_TessCoord.xyz + DELTAX );
 	float hm0 = Height( gl_TessCoord.xyz - DELTAX );
@@ -68,17 +94,31 @@ void main( )
 	float dzdy = h0p - h0m;
 	*/
 
-	vec3 new = gl_TessCoord.xyz;
-	new.z += h00; // displace the point
 	
-	//vec3 new = gl_TessCoord.xyz;
-	//new.z += h00; // displace the point
+	//new.y += h00; // displace the point
 	//new.y += h00;
 
 	
 	float u = gl_TessCoord.x;
 	float v = gl_TessCoord.y;
 	float w = gl_TessCoord.z;
+
+	/*
+	vec3 v = u + v + w;
+
+	float min_noise_value = 0.5f;
+    float max_noise_value = 2.5f;
+    float intensity_scale = 0.015f;
+    float noise_range = max_noise_value - min_noise_value;
+
+	float noise = texture(uDispUnit, vec2(v)).r;
+	 // sphere offsetting multiplier
+    height = min_noise_value + noise_range * noise * intensity_scale;
+
+	vec3 pos = normalize(x + y + z);
+
+	 pos *= height;
+	 */
 
 	// ----------------------------------------------------------------------
     // retrieve control point texture coordinates
@@ -95,7 +135,7 @@ void main( )
 	
 
 	 // lookup texel at patch coordinate for height and scale + shift as desired
-    //Height = texture(uDispUnit, texCoord).r;
+    //Height = texture(uDispUnit, texCoord).rgb;
 
 	float phi = PI * ( u - .5 );
 	float theta = 2. * PI * ( v - .5 );
@@ -104,6 +144,8 @@ void main( )
 	vec3 xyz = vec3( cosphi*cos(theta), sin(phi), cosphi*sin(theta) );
 	teNormal = xyz;
 	
+	
+	new += normalize(xyz) * Displacement;
 
 	xyz *= tcRadius;
 	xyz += tcCenter;

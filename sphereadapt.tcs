@@ -22,9 +22,23 @@ in vec3 Normal_CS_in[];
 out vec2 TexCoord_ES_in[];
 out vec3 Normal_ES_in[];
 
+in VS_OUT
+{	
+	vec2 vST;
+    vec2 tc;
+} tcs_in[];
+
+out TCS_OUT
+{
+	vec2 vST;
+    vec2 tc;
+} tcs_out[];
 
 void main( )
 {
+
+	 tcs_out[gl_InvocationID].tc = tcs_in[gl_InvocationID].tc;
+	 tcs_out[gl_InvocationID].vST = tcs_in[gl_InvocationID].vST;
 
 	// Set the control points of the output patch
     TexCoord_ES_in[gl_InvocationID] = TexCoord_CS_in[gl_InvocationID];

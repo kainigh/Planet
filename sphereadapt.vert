@@ -20,9 +20,16 @@ out float vRadius;
 out vec4 vColor;
 out vec3 vTnorm;
 
+out VS_OUT
+{
+	vec2 vST;
+    vec2 tc;
+} vs_out;
 
 void main( )
 {
+	vec2 st = gl_MultiTexCoord0.st;
+	vs_out.vST = st;
 
 	TexCoord_CS_in = TexCoord_VS_in;
 	//Normal_CS_in = gl_Vertex.xyz;

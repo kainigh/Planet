@@ -444,11 +444,11 @@ Display( )
 	glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, Tex0);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		//glCallList(DL0);
+		glCallList(DL0);
 
 		glBindTexture(GL_TEXTURE_2D, Tex1);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		//glCallList(DL1);
+		glCallList(DL1);
 	glDisable(GL_TEXTURE_2D);
 
 	Pattern.UnUse( );       // Pattern.Use(0);  also works
@@ -821,14 +821,14 @@ InitGraphics( )
 	Pattern.SetUniformVariable("uLightY", 0.0f);
 	Pattern.SetUniformVariable("uLightZ", 10.0f);
 
-	Pattern.SetUniformVariable("uNormalScale", 0.06f);
-	Pattern.SetUniformVariable("uHeightScale", 0.4f);
+	Pattern.SetUniformVariable("uNormalScale", 0.6f);
+	Pattern.SetUniformVariable("uHeightScale", 0.9f);
 	Pattern.SetUniformVariable("uSeaLevel", 0.3f);
 
 	Pattern.SetUniformVariable("uDispUnit", 1.0f);
 	Pattern.SetUniformVariable("uColorUnit", 1.0f);
-	Pattern.SetUniformVariable("uDoElevations", true);
-	Pattern.SetUniformVariable("uDoLighting", true);
+	Pattern.SetUniformVariable("uDoElevations", false);
+	Pattern.SetUniformVariable("uDoLighting", false);
 	
 	Pattern.UnUse( );
 
